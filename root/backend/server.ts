@@ -1,20 +1,23 @@
-import { config } from 'dotenv';
-config(); // Configure dotenv
-import app from './src/app';
+import 'dotenv/config'
 
-const PORT = process.env.PORT || 5001;
+
+import app from './src/app';
+import { env } from '@/config/env';
+import { connectDB } from '@/config/db';
+
+
 
 // Connect to MongoDb;
+connectDB();
 
 // Start server
-const server = app.listen(PORT, () => {
+const server = app.listen(env.PORT, () => {
 	console.log(
-		`Server is running in ${process.env.NODE_ENV} mode on port ${PORT}`
+		`Server is running in ${env.NODE_ENV} mode on port ${env.PORT}`
 	);
 });
 
 
 
-console.log('running server');
 
 export default server;
