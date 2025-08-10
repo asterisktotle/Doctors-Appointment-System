@@ -1,9 +1,6 @@
-import { Document } from "mongoose"
-
-
 type UserRole = 'doctor'| 'patient' | 'admin'
 
-export interface UserInterface extends Document {
+export interface UserInterface  {
     firstName: string
     email: string,
     password: string

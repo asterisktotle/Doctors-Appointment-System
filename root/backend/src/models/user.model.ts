@@ -1,4 +1,4 @@
-import mongoose, { CallbackError, Schema} from 'mongoose'
+import mongoose, { CallbackError, Schema, model} from 'mongoose'
 import { UserInterface } from '../types/user.type';
 import { hashPassword } from '@/utils/hashedPassword.utils';
 
@@ -69,4 +69,4 @@ userSchema.pre('save', async function (next){
 })
 
 
-export const UserModel = mongoose.model('User', userSchema)
+export const UserModel = model('User', userSchema)
