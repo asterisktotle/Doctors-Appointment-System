@@ -23,4 +23,3 @@ export const isPasswordMatch = async (hashedPass: string, plainPass: string) => 
     }
 
 }
-
