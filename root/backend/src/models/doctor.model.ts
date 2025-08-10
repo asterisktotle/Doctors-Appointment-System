@@ -1,5 +1,6 @@
 import { Schema, model } from "mongoose";
 import { DoctorInterface } from '../types/doctor.type';
+import { sexCategory } from "./patient.model";
 
 // Constants
 const medicalSpecializations = [
@@ -45,9 +46,13 @@ const doctorSchema = new Schema<DoctorInterface>({
         minlength: [2, 'Last name must be at least 2 characters'],
         maxlength: [50, 'Last name cannot exceed 50 characters']
     },
+    sex: {
+        type: String,
+        enum: sexCategory,
+        required: [true, 'Indicate your sex']
+    },
     specialization: {
         type: String,
-        required: [true, 'Specialization is required'],
         enum: {
             values: medicalSpecializations,
             message: 'Please select a valid specialization'
@@ -60,13 +65,11 @@ const doctorSchema = new Schema<DoctorInterface>({
     },
     phone: {
         type: String,
-        required: [true, 'Phone number is required'],
         trim: true
     },
 
     address: {
         type: String,
-        required: [true, 'Address is required'],
         trim: true,
         minlength: [10, 'Address must be at least 10 characters'],
         maxlength: [200, 'Address cannot exceed 200 characters']

@@ -1,6 +1,4 @@
-import { ObjectId } from "mongoose";
-
-// type AvailableDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday' ]
+import moongose  from "mongoose";
 type AvailableDays = 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday';
 
 
@@ -23,12 +21,13 @@ type MedicalSpecialization =
 
 export interface DoctorInterface {
     
-    userId: ObjectId
+    userId: moongose.Types.ObjectId,
     lastName: string,
+    sex: 'Male' | 'Female' | 'Other',
     specialization: MedicalSpecialization,
     customSpecialization?: string | null,
-    phone: string,
-    address: string,
+    phone?: string,
+    address?: string,
     availability: [
         {
             days: AvailableDays[],
