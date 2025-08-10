@@ -28,7 +28,11 @@ const patientSchema= new Schema<PatientInterface>({
     minlength: [10, 'Address must be at least 10 characters'],
     maxlength: [200, 'Address cannot exceed 200 characters']
     },
-})
+}, 
+{
+    timestamps: true
+}
+)
 
 
 export const Patient = model('Patient',patientSchema)
