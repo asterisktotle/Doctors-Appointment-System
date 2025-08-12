@@ -10,6 +10,13 @@ const patientSchema= new Schema<PatientInterface>({
         required: true,
         unique: true,
     },
+    firstName: {
+        type: String,
+        required: [true ,'First name is required'],
+        trim: true,
+        minLength: 2,
+        maxLength: 50,
+    },
     lastName: {
         type: String,
         required: [true, 'Last name is required'],
@@ -22,11 +29,16 @@ const patientSchema= new Schema<PatientInterface>({
         enum: sexCategory,
         required: [true, 'Indicate your sex']
     },
+    birthDate: {
+        type: Date
+    },
     address: {
-    type: String,
-    trim: true,
-    minlength: [10, 'Address must be at least 10 characters'],
-    maxlength: [200, 'Address cannot exceed 200 characters']
+        street: String,
+        city: String,
+        state: String,
+        zipCode: String,
+        country: { type: String, default: 'Philippines' },
+        _id: false
     },
 }, 
 {

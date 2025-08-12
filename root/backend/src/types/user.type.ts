@@ -1,11 +1,15 @@
 type UserRole = 'doctor'| 'patient' | 'admin'
 
 export interface UserInterface  {
-    firstName: string
-    email: string,
+    email: string
     password: string
     role: UserRole
     isVerified: boolean
-    createdAt: Date;
-    updatedAt: Date;
+    // isActive: boolean
+    // lastActive: Date
+    verificationToken: string
+    resetPasswordToken?: string
+    resetPasswordExpires?: Date
+    createdAt: Date
+    updatedAt: Date
 }

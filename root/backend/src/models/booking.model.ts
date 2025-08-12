@@ -1,6 +1,6 @@
 import { BookingInterface } from "@/types/booking.type";
 import { generateReferenceCode } from "@/utils/generateReferenceCode";
-import { Schema, Model, model } from "mongoose";
+import { Schema, model } from "mongoose";
 
 const statusValue = [ "pending" , "confirmed" ,"cancelled","completed"]
 const bookingSchema = new Schema<BookingInterface>(
@@ -67,8 +67,7 @@ bookingSchema.pre('save', function(next) {
     this.reference_code = generateReferenceCode();
   }
   
-  next();
+   next();
 });
-
 
 export const Booking = model('Booking', bookingSchema)

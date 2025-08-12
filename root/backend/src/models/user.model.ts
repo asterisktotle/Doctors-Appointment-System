@@ -7,13 +7,6 @@ const userRole = ['doctor', 'patient', 'admin']
 
 const userSchema = new Schema<UserInterface>(
     {
-        firstName: {
-            type: String,
-            required: [true ,'First name is required'],
-            trim: true,
-            minLength: 2,
-            maxLength: 50,
-        },
         email: {
             type: String,
             required: [true, 'Email is required'],
@@ -39,8 +32,10 @@ const userSchema = new Schema<UserInterface>(
         isVerified:{
             type: Boolean,
             default: false,
-            required: true
         },
+        verificationToken: String,
+        resetPasswordToken: String,
+        resetPasswordExpires: Date,
         createdAt: {
             type: Date,
             default: () => Date.now(),

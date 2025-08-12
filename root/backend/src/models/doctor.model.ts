@@ -39,6 +39,13 @@ const doctorSchema = new Schema<DoctorInterface>({
         required: true,
         unique: true,
     },
+    firstName: {
+        type: String,
+        required: [true ,'First name is required'],
+        trim: true,
+        minLength: [2, 'Last name must be at least 2 characters'],
+        maxlength: [50, 'Last name cannot exceed 50 characters']
+    },
     lastName: {
         type: String,
         required: [true, 'Last name is required'],
@@ -50,6 +57,9 @@ const doctorSchema = new Schema<DoctorInterface>({
         type: String,
         enum: sexCategory,
         required: [true, 'Indicate your sex']
+    },
+    birthDate: {
+        type: Date
     },
     specialization: {
         type: String,
@@ -67,14 +77,17 @@ const doctorSchema = new Schema<DoctorInterface>({
         type: String,
         trim: true
     },
-
-    address: {
-        type: String,
-        trim: true,
-        minlength: [10, 'Address must be at least 10 characters'],
-        maxlength: [200, 'Address cannot exceed 200 characters']
+   address: {
+    street: String,
+    city: String,
+    state: String,
+    zipCode: String,
+    country: { 
+        type: String, 
+        default: 'Philippines' 
     },
-    
+    _id: false
+    }, 
     availability: [{
         days: [{
             type: String,
