@@ -21,6 +21,14 @@ const createUserAccount = async (userData: UserInterface) => {
         })
 
         await user.save()
+        
+        const userResponse = user.toJSON();
+
+        return {
+            user: userResponse,
+            verificationToken
+        }
+
 
     } catch (error) {
         throw error
@@ -38,3 +46,9 @@ const logoutUserAccount = async () => {
 
 // Change password 
 // Change email to be added 
+
+export const UserService = {
+    createUserAccount,
+    loginUserAccount,
+    logoutUserAccount
+}
