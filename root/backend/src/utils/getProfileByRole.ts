@@ -48,8 +48,39 @@ export const createDefaultAdminProfile = async (userId: string) => {
     };
 };
 
+export const getProfileByRole = async (role: string, userId: string) => {
+    switch (role) {
+        case 'patient': 
+            const patientProfile = await getPatientProfile(userId);
+            
+            if (!patientProfile) throw new Error('Patient profile not found');
+            return {
+                firstName: patientProfile.firstName,
+                lastName: patientProfile.lastName
+            };
 
-export const getModels = {
-    getDoctorProfile,
-    getPatientProfile
+        case 'doctor': 
+            const doctorProfile = await getDoctorProfile(userId)
+            
+            if (!doctorProfile) throw new Error('Doctor profile not found');
+            return {
+                firstName: doctorProfile.firstName,
+                lastName: doctorProfile.lastName,
+                specialization: doctorProfile.specialization,
+                customSpecialization: doctorProfile.customSpecialization,
+                availability: doctorProfile.availability
+            };
+
+        case 'admin':
+            return {
+                    firstName: 'Admin',
+                    lastName: 'User',
+                    department: 'System Administration'
+                };
+
+        default: 
+                throw new Error('Invalid user role')
+
+    }
+    
 }

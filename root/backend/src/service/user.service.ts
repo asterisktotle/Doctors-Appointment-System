@@ -1,10 +1,8 @@
 import { env } from '@/config/env';
 import { AdminModel } from '@/models/admin.model';
-import { DoctorModel } from '@/models/doctor.model';
-import { PatientModel } from '@/models/patient.model';
 import { UserModel } from '@/models/user.model';
 import { UserInterface } from '@/types/user.type';
-import { createDefaultAdminProfile } from '@/utils/getModels';
+import { createDefaultAdminProfile, getProfileByRole } from '@/utils/getProfileByRole';
 import { isPasswordMatch } from '@/utils/hashedPassword.utils';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
@@ -60,9 +58,14 @@ const loginUserAccount = async (userData: UserInterface) => {
             // Create admin account
             if(!adminProfile){
                 profile = await createDefaultAdminProfile(isExistingUser._id.toString());
+            } else {
+                profile = {
+                    firstName: adminProfile.firstName,
+                    lastName: adminProfile.lastName
+                };
             }
-
-
+        } else {
+            profile = await getProfileByRole(isExistingUser.role, isExistingUser._id)
         }
 
         const isPasswordCorrect = await isPasswordMatch(isExistingUser.password, userData.password)
@@ -80,9 +83,7 @@ const loginUserAccount = async (userData: UserInterface) => {
             isVerified: isExistingUser.isVerified,
             role: isExistingUser.role,
         }
-        // let profile = {firstName: '', lastName: '', }
-            
-
+        
 
         // Check user role and get profile data
 
