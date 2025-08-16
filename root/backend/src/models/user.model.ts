@@ -1,4 +1,4 @@
-import mongoose, { CallbackError, Schema, model} from 'mongoose'
+import { CallbackError, Schema, model} from 'mongoose'
 import { UserInterface } from '../types/user.type';
 import { hashPassword } from '@/utils/hashedPassword.utils';
 
@@ -46,7 +46,34 @@ const userSchema = new Schema<UserInterface>(
             default: () => Date.now(),
         }
     },
-    { timestamps: true}
+    { 
+        timestamps: true,
+        toJSON: {
+            transform(doc, ret) {
+                delete ret.password;
+                delete ret.verificationToken;
+                delete ret.resetPasswordToken; 
+                delete ret.resetPasswordExpires; 
+                delete ret.__v;
+
+                ret.id = ret._id;
+                delete ret._id;
+
+                return ret;
+            }
+        },
+        toObject: {
+            transform(doc, ret) {
+                // Same transformation for toObject()
+                delete ret.password;
+                delete ret.verificationToken;
+                delete ret.resetPasswordToken;
+                delete ret.resetPasswordExpires;
+                
+                return ret;
+            }
+        }  
+    }
 )
 
 // Hash the password before saving to DB
@@ -56,7 +83,7 @@ userSchema.pre('save', async function (next){
     if(!this.isModified('password')) return next()
 
     try{
-        this.password = await hashPassword(this.password)
+        this.password = await hashPassword(this.password as string)
         next();
     } catch(error){
         next(error as CallbackError)

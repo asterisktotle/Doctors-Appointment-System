@@ -15,9 +15,10 @@ const envSchema = z.object({
     //Database
     MONGODB_URI: z.string().url({
         message: 'MONGO_URI mus be valid URL'
-    })
+    }),
 
     /// ADD JWT
+    JWT_SECRET: z.string(),
 })
 
 const parsedEnv = envSchema.safeParse(process.env);

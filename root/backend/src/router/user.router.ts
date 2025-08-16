@@ -1,12 +1,16 @@
 import { Router } from "express";
 import { UserMiddleWare } from "@/middleware/user.middleware";
 import { UserService } from "@/service/user.service";
+
+// Services
 const {
-    createUserAccount
+    createUserAccount, 
+    loginUserAccount,
+    logoutUserAccount,
  } = UserService
-const {
-    validateUser
-} = UserMiddleWare
+
+// Middleware
+const {validateUser} = UserMiddleWare
 
 
 const UserRouter = Router()
@@ -15,6 +19,7 @@ const UserRouter = Router()
 
 // Public routes
 UserRouter.post('/register',validateUser, createUserAccount)
+UserRouter.post('/login', validateUser, loginUserAccount)
 
 
 export default UserRouter

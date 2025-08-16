@@ -110,4 +110,4 @@ doctorSchema.pre('save', function(next) {
     next();
 });
 
-export const Doctor = model<DoctorInterface>('Doctor', doctorSchema);
+export const DoctorModel = model<DoctorInterface>('Doctor', doctorSchema);

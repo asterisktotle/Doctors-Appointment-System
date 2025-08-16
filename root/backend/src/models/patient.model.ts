@@ -47,4 +47,4 @@ const patientSchema= new Schema<PatientInterface>({
 )
 
 
-export const Patient = model('Patient',patientSchema)
+export const PatientModel = model('Patient',patientSchema)
