@@ -2,7 +2,10 @@ import { env } from '@/config/env';
 import { AdminModel } from '@/models/admin.model';
 import { UserModel } from '@/models/user.model';
 import { UserInterface } from '@/types/user.type';
-import { createDefaultAdminProfile, getProfileByRole } from '@/utils/getProfileByRole';
+import {
+	createDefaultAdminProfile,
+	getProfileByRole,
+} from '@/utils/getProfileByRole';
 import { isPasswordMatch } from '@/utils/hashedPassword.utils';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
@@ -38,77 +41,81 @@ const createUserAccount = async (userData: UserInterface) => {
 	}
 };
 const loginUserAccount = async (userData: UserInterface) => {
-    try {
-        
-	    const isExistingUser = await UserModel.findOne({ email: userData.email }, '+password');
+	try {
+		const isExistingUser = await UserModel.findOne({ email: userData.email })
+			.select('+password')
+			.lean();
 
-    
+		// Check if email has no account
+		if (!isExistingUser) {
+			throw new Error('The email has no account');
+		}
 
-        // Check if email has no account
-        if (!isExistingUser) {
-            throw new Error('The email has no account')
-        }
+		let profile;
 
-        let profile;
-        
-        // Admin login 
-        if(isExistingUser.role === 'admin') {
-            const adminProfile = await AdminModel.findOne({userId: isExistingUser._id})
-            
-            // Create admin account
-            if(!adminProfile){
-                profile = await createDefaultAdminProfile(isExistingUser._id.toString());
-            } else {
-                profile = {
-                    firstName: adminProfile.firstName,
-                    lastName: adminProfile.lastName
-                };
-            }
-        } else {
-            profile = await getProfileByRole(isExistingUser.role, isExistingUser._id)
-        }
+		// Admin login
+		if (isExistingUser.role === 'admin') {
+			const adminProfile = await AdminModel.findOne({
+				userId: isExistingUser._id,
+			});
 
-        const isPasswordCorrect = await isPasswordMatch(isExistingUser.password, userData.password)
+			// Create admin account
+			if (!adminProfile) {
+				profile = await createDefaultAdminProfile(
+					isExistingUser._id.toString()
+				);
+			} else {
+				profile = {
+					firstName: adminProfile.firstName,
+					lastName: adminProfile.lastName,
+				};
+			}
+		} else {
+			profile = await getProfileByRole(
+				isExistingUser.role,
+				isExistingUser._id.toString()
+			);
+		}
 
-        // Check hashed password
-        if (!isPasswordCorrect) {
-            throw new Error ('Incorrect password')
-        }
+		if (!isExistingUser.password) {
+			throw new Error('Password field not found');
+		}
 
+		const isPasswordCorrect = await isPasswordMatch(
+			isExistingUser.password!,
+			userData.password
+		);
 
-        // User Data
-        const user = {
-            id: isExistingUser._id,
-            email: isExistingUser.email,
-            isVerified: isExistingUser.isVerified,
-            role: isExistingUser.role,
-        }
-        
+		// Check hashed password
+		if (!isPasswordCorrect) {
+			throw new Error('Incorrect password');
+		}
 
-        // Check user role and get profile data
+		// User Data
+		const user = {
+			id: isExistingUser._id,
+			email: isExistingUser.email,
+			isVerified: isExistingUser.isVerified,
+			role: isExistingUser.role,
+		};
 
-        // Generate JWT Token
-        const token = jwt.sign(
-            { id: isExistingUser._id, role: isExistingUser.role},
-            env.JWT_SECRET!,
-            { expiresIn: '1h'}
-        );
+		// Check user role and get profile data
 
-        
-    
+		// Generate JWT Token
+		const token = jwt.sign(
+			{ id: isExistingUser._id, role: isExistingUser.role },
+			env.JWT_SECRET!,
+			{ expiresIn: '1h' }
+		);
 
-        return {
-            token,
-            user,
-            profile,
-        }
-            
-
-
-    } catch (error) {
-        throw error
-    }
-
+		return {
+			token,
+			user,
+			profile,
+		};
+	} catch (error) {
+		throw error;
+	}
 };
 const logoutUserAccount = async () => {
 	// TODO:

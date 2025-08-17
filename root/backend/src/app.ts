@@ -14,9 +14,9 @@ app.get('/', (req, res) => {
 })
 
 // Middleware
+app.use(express.json())
 app.use(helmet())
 app.use(cors(corsConfig))
-app.use(express.json())
 
 
 

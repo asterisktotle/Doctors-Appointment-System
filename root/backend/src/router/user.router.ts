@@ -1,27 +1,18 @@
-import { Router } from "express";
-import { UserMiddleWare } from "@/middleware/user.middleware";
-import { UserService } from "@/service/user.service";
+import { Router } from 'express';
+import { UserMiddleWare } from '@/middleware/user.middleware';
+import { UserController } from '@/controller/user.controller';
 
-// Services
-const {
-    createUserAccount, 
-    loginUserAccount,
-    logoutUserAccount,
- } = UserService
+// Controllers
+const { registerUser, logInUser } = UserController;
 
 // Middleware
-const {validateUser} = UserMiddleWare
+const { validateUser } = UserMiddleWare;
 
-
-const UserRouter = Router()
-
-
+const UserRouter = Router();
 
 // Public routes
-UserRouter.post('/register',validateUser, createUserAccount)
-UserRouter.post('/login', validateUser, loginUserAccount)
+UserRouter.post('/register', validateUser, registerUser);
+UserRouter.post('/login', validateUser, logInUser);
 
-
-export default UserRouter
+export default UserRouter;
 // Protected routes
-
