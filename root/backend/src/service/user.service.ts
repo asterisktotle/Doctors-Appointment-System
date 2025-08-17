@@ -138,15 +138,25 @@ const logoutUserAccount = async (userData: UserInterface) => {
 	}
 };
 
+// Delete account
+export const deleteUserAccount = async (userData: UserInterface) => {
+  const deletedUser = await UserModel.findByIdAndDelete(userData.id);
 
+  if (!deletedUser) {
+    throw new Error("The email has no account");
+  }
+
+  return true;
+};
 
 // Change password
 // Change email to be added
 
-// Delete account
+
 
 export const UserService = {
 	createUserAccount,
 	loginUserAccount,
 	logoutUserAccount,
+	deleteUserAccount,
 };

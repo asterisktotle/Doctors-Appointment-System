@@ -1,4 +1,4 @@
-import { UserService } from '@/service/user.service';
+import { deleteUserAccount, UserService } from '@/service/user.service';
 
 const registerUser = async (req, res) => {
 	try {
@@ -59,8 +59,32 @@ const logOutUser = async (req, res) => {
 	}
 }
 
+const deleteUser = async (req, res) => {
+	try {
+		const isDeleted = await deleteUserAccount(req.body)
+
+		if(!isDeleted) {
+			res.status(400).json({
+			success: false,
+			message: 'Delete account failed',
+			});	
+		}
+
+		res.status(200).json({
+			success: true,
+			message: 'Deleted successfully',
+		});	
+	} catch (error) {
+		res.status(400).json({
+			success: false,
+			message: error.message,
+		});
+	}
+ }
+
 export const UserController = {
 	registerUser,
 	logInUser,
-	logOutUser
+	logOutUser,
+	deleteUser
 };
