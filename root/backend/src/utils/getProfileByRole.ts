@@ -6,7 +6,7 @@ const getPatientProfile = async (userId: string) => {
     const profile = await PatientModel.findOne({userId: userId});
 
     if(!profile) {
-        throw new Error('Profile not found')
+        throw new Error('Patient profile not found')
     }
 
     return {
@@ -19,7 +19,7 @@ const getDoctorProfile = async (userId: string) => {
     const profile = await DoctorModel.findOne({userId: userId});
 
     if(!profile) {
-        throw new Error('Profile not found')
+        throw new Error('Doctor profile not found')
     }
 
     return {
@@ -53,7 +53,6 @@ export const getProfileByRole = async (role: string, userId: string) => {
         case 'patient': 
             const patientProfile = await getPatientProfile(userId);
             
-            if (!patientProfile) throw new Error('Patient profile not found');
             return {
                 firstName: patientProfile.firstName,
                 lastName: patientProfile.lastName
@@ -62,7 +61,6 @@ export const getProfileByRole = async (role: string, userId: string) => {
         case 'doctor': 
             const doctorProfile = await getDoctorProfile(userId)
             
-            if (!doctorProfile) throw new Error('Doctor profile not found');
             return {
                 firstName: doctorProfile.firstName,
                 lastName: doctorProfile.lastName,

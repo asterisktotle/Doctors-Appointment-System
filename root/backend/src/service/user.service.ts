@@ -40,9 +40,12 @@ const createUserAccount = async (userData: UserInterface) => {
 		throw error;
 	}
 };
+
+
+// To Login, user must create a profile (patient/doctor)
 const loginUserAccount = async (userData: UserInterface) => {
 	try {
-		const isExistingUser = await UserModel.findOne({ email: userData.email })
+		const isExistingUser = await UserModel.findOne({ email: userData.email.trim() })
 			.select('+password')
 			.lean();
 
@@ -76,30 +79,29 @@ const loginUserAccount = async (userData: UserInterface) => {
 				isExistingUser._id.toString()
 			);
 		}
-
-		if (!isExistingUser.password) {
+		
+		// Check account password
+		if (!isExistingUser.password || !userData.password) {
 			throw new Error('Password field not found');
 		}
 
 		const isPasswordCorrect = await isPasswordMatch(
-			isExistingUser.password!,
-			userData.password
+			isExistingUser.password,
+			userData.password.trim()
 		);
 
-		// Check hashed password
+		
 		if (!isPasswordCorrect) {
 			throw new Error('Incorrect password');
 		}
 
-		// User Data
+		// Create User Data
 		const user = {
 			id: isExistingUser._id,
 			email: isExistingUser.email,
 			isVerified: isExistingUser.isVerified,
-			role: isExistingUser.role,
+			role: isExistingUser.role,	
 		};
-
-		// Check user role and get profile data
 
 		// Generate JWT Token
 		const token = jwt.sign(
@@ -117,13 +119,31 @@ const loginUserAccount = async (userData: UserInterface) => {
 		throw error;
 	}
 };
-const logoutUserAccount = async () => {
-	// TODO:
-	//
+
+// Client Side Logout
+const logoutUserAccount = async (userData: UserInterface) => {
+	try {
+		const isExistingUser = await UserModel.findOne({ email: userData.email.trim() })
+
+		if (!isExistingUser) {
+			throw new Error('The email has no account');
+		}
+
+		// remove token from local storage/ cookies
+
+		return true;
+
+	} catch (error) {
+		throw error
+	}
 };
+
+
 
 // Change password
 // Change email to be added
+
+// Delete account
 
 export const UserService = {
 	createUserAccount,
