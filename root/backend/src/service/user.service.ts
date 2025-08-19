@@ -1,5 +1,7 @@
 import { env } from '@/config/env';
 import { AdminModel } from '@/models/admin.model';
+import { DoctorModel } from '@/models/doctor.model';
+import { PatientModel } from '@/models/patient.model';
 import { UserModel } from '@/models/user.model';
 import { UserInterface } from '@/types/user.type';
 import {
@@ -139,14 +141,54 @@ const logoutUserAccount = async (userData: UserInterface) => {
 };
 
 // Delete account
+// TODO: DELETE DOCTOR SCHEMA
+import mongoose from "mongoose";
+
 export const deleteUserAccount = async (userData: UserInterface) => {
-  const deletedUser = await UserModel.findByIdAndDelete(userData.id);
+  const session = await mongoose.startSession();
+  session.startTransaction();
 
-  if (!deletedUser) {
-    throw new Error("The email has no account");
+  try {
+    const userProfile = await UserModel.findById(userData.id).session(session);
+
+    if (!userProfile) {
+      throw new Error("User not found");
+    }
+
+    let deletedProfile;
+
+    switch (userData.role) {
+      case "patient":
+        deletedProfile = await PatientModel.findOneAndDelete(
+          { userId: userData.id },
+          { session }
+        );
+        break;
+      case "doctor":
+        deletedProfile = await DoctorModel.findOneAndDelete(
+          { userId: userData.id },
+          { session }
+        );
+        break;
+      default:
+        throw new Error(`Unsupported role: ${userData.role}`);
+    }
+
+    if (!deletedProfile) {
+      throw new Error("Failed to delete the role-based profile");
+    }
+
+    await UserModel.findByIdAndDelete(userData.id, { session });
+
+    await session.commitTransaction();
+    session.endSession();
+
+    return true;
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
   }
-
-  return true;
 };
 
 // Change password
