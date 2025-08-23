@@ -11,6 +11,8 @@ import {
 import { isPasswordMatch } from '@/utils/hashedPassword.utils';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
+import mongoose from "mongoose";
+
 
 const createUserAccount = async (userData: UserInterface) => {
 	// TODO:
@@ -140,55 +142,53 @@ const logoutUserAccount = async (userData: UserInterface) => {
 	}
 };
 
-// Delete account
-// TODO: DELETE DOCTOR SCHEMA
-import mongoose from "mongoose";
 
 export const deleteUserAccount = async (userData: UserInterface) => {
-  const session = await mongoose.startSession();
-  session.startTransaction();
+	// Create a transaction for deleting both User and Role profile
+	const session = await mongoose.startSession();
+	session.startTransaction();
 
-  try {
-    const userProfile = await UserModel.findById(userData.id).session(session);
+	try {
+		const userProfile = await UserModel.findById(userData.id).session(session);
 
-    if (!userProfile) {
-      throw new Error("User not found");
-    }
+		if (!userProfile) {
+		throw new Error("User not found");
+		}
 
-    let deletedProfile;
+		let deletedProfile;
 
-    switch (userData.role) {
-      case "patient":
-        deletedProfile = await PatientModel.findOneAndDelete(
-          { userId: userData.id },
-          { session }
-        );
-        break;
-      case "doctor":
-        deletedProfile = await DoctorModel.findOneAndDelete(
-          { userId: userData.id },
-          { session }
-        );
-        break;
-      default:
-        throw new Error(`Unsupported role: ${userData.role}`);
-    }
+		switch (userData.role) {
+		case "patient":
+			deletedProfile = await PatientModel.findOneAndDelete(
+			{ userId: userData.id },
+			{ session }
+			);
+			break;
+		case "doctor":
+			deletedProfile = await DoctorModel.findOneAndDelete(
+			{ userId: userData.id },
+			{ session }
+			);
+			break;
+		default:
+			throw new Error(`Unsupported role: ${userData.role}`);
+		}
 
-    if (!deletedProfile) {
-      throw new Error("Failed to delete the role-based profile");
-    }
+		if (!deletedProfile) {
+		throw new Error("Failed to delete the role-based profile");
+		}
 
-    await UserModel.findByIdAndDelete(userData.id, { session });
+		await UserModel.findByIdAndDelete(userData.id, { session });
 
-    await session.commitTransaction();
-    session.endSession();
+		await session.commitTransaction();
+		session.endSession();
 
-    return true;
-  } catch (error) {
-    await session.abortTransaction();
-    session.endSession();
-    throw error;
-  }
+		return true;
+	} catch (error) {
+		await session.abortTransaction();
+		session.endSession();
+		throw error;
+	}
 };
 
 // Change password

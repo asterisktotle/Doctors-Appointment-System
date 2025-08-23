@@ -1,6 +1,7 @@
 import { Router } from 'express';
-import { UserMiddleWare } from '@/middleware/user.middleware';
+import { UserMiddleWare, validator } from '@/middleware/user.middleware';
 import { UserController } from '@/controller/user.controller';
+import { LoginSchema } from '@/middleware/validation/patient.validation';
 
 // Controllers
 const { registerUser, logInUser, logOutUser, deleteUser} = UserController;
@@ -11,8 +12,8 @@ const { validateUser } = UserMiddleWare;
 const UserRouter = Router();
 
 // Public routes
-UserRouter.post('/register', validateUser, registerUser);
-UserRouter.post('/login', validateUser, logInUser);
+UserRouter.post('/register', validator(LoginSchema), registerUser);
+UserRouter.post('/login', validator(LoginSchema), logInUser);
 UserRouter.post('/logout', validateUser, logOutUser);
 UserRouter.delete('/delete', validateUser, deleteUser )
 
