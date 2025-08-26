@@ -14,11 +14,11 @@ import jwt from 'jsonwebtoken';
 import mongoose from "mongoose";
 
 
-const createUserAccount = async (userData: UserInterface) => {
+const createUserAccount = async (userData: UserInterface, session: mongoose.ClientSession) => {
 	// TODO:
 	try {
 		// Check if account is already created
-		const isExistingUser = await UserModel.findOne({ email: userData.email });
+		const isExistingUser = await UserModel.findOne({ email: userData.email }).session(session);
 
 		if (isExistingUser) {
 			throw new Error('Email is already used');
@@ -32,7 +32,7 @@ const createUserAccount = async (userData: UserInterface) => {
 			isVerified: false,
 		});
 
-		await user.save();
+		await user.save({session});
 
 		const userResponse = user.toJSON();
 
@@ -158,20 +158,20 @@ export const deleteUserAccount = async (userData: UserInterface) => {
 		let deletedProfile;
 
 		switch (userData.role) {
-		case "patient":
-			deletedProfile = await PatientModel.findOneAndDelete(
-			{ userId: userData.id },
-			{ session }
-			);
-			break;
-		case "doctor":
-			deletedProfile = await DoctorModel.findOneAndDelete(
-			{ userId: userData.id },
-			{ session }
-			);
-			break;
-		default:
-			throw new Error(`Unsupported role: ${userData.role}`);
+			case "patient":
+				deletedProfile = await PatientModel.findOneAndDelete(
+				{ userId: userData.id },
+				{ session }
+				);
+				break;
+			case "doctor":
+				deletedProfile = await DoctorModel.findOneAndDelete(
+				{ userId: userData.id },
+				{ session }
+				);
+				break;
+			default:
+				throw new Error(`Unsupported role: ${userData.role}`);
 		}
 
 		if (!deletedProfile) {

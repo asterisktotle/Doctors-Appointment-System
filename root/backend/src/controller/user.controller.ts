@@ -2,7 +2,6 @@ import { deleteUserAccount, UserService } from '@/service/user.service';
 
 const registerUser = async (req, res) => {
 	try {
-		console.log('Request body:', req.body); // Add this line to debug
 		const result = await UserService.createUserAccount(req.body);
 
 		res.status(201).json({
@@ -82,9 +81,10 @@ const deleteUser = async (req, res) => {
 	}
  }
 
-export const UserController = {
+const UserController = {
 	registerUser,
 	logInUser,
 	logOutUser,
 	deleteUser
 };
+export default UserController;

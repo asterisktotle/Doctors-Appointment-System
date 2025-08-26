@@ -3,6 +3,7 @@ import cors from 'cors'
 import corsConfig from './config/cors';
 import helmet from 'helmet';
 import UserRouter from './router/user.router';
+import PatientRouter from './router/patient.router';
 
 
 const app = express();
@@ -22,7 +23,8 @@ app.use(cors(corsConfig))
 
 
 // Import routes
-app.use('/api/v1', UserRouter) 
+app.use('/api/user', UserRouter) 
+app.use('/api/patient',PatientRouter)
 
 // Import middlewares error handler
 

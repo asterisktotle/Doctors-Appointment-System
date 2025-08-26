@@ -26,7 +26,7 @@ export interface DoctorInterface {
     lastName: string,
     sex: 'Male' | 'Female' | 'Other',
     birthDate: Date,
-    specialization: MedicalSpecialization,
+    specialization: MedicalSpecialization |null,
     customSpecialization?: string | null,
     phone?: string,
     address: {
