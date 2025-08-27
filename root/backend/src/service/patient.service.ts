@@ -1,11 +1,6 @@
-// Create patient profile
-
 import { PatientModel } from "@/models/patient.model"
-import { PatientInterface } from "@/types/patient.type"
-import mongoose from "mongoose"
-
-
-export const createPatientProfile = async (patientData: PatientInterface, session: mongoose.ClientSession) => {
+import { PatientInterface } from "@/types/profile.type"
+export const createPatientProfile = async (patientData: PatientInterface) => {
     
     // Get UserId by UserProfile;
     try {
@@ -23,7 +18,7 @@ export const createPatientProfile = async (patientData: PatientInterface, sessio
                country: patientData.address.country
            }
        })
-       profile.save({session})
+       profile.save()
        const response = profile.toJSON()
         return {
             profile: response

@@ -1,6 +1,6 @@
+import { availableDays, medicalSpecializations } from '@/utils/constants';
 import z from 'zod'
 
-// Create the Zod schema for patient profile
 export const PatientProfileSchema = z.object({
   userId: z.string().min(1, "User ID is required"),
   
@@ -51,4 +51,25 @@ export const PatientProfileSchema = z.object({
       .min(1, "Country is required")
       .max(50, "Country must be less than 50 characters")
   })
+});
+
+
+const availabilitySchema = z.object({
+    days: z.array(z.enum(availableDays)),
+    slots: z.array(z.string())
+});
+
+export const DoctorProfileSchema = PatientProfileSchema.extend({
+  specialization: z.enum(medicalSpecializations).optional(),
+  customSpecialization: z.string().trim().optional(),
+    availability: z.array(availabilitySchema).default([])
+}).refine((data) => {
+    // If specialization is "other", customSpecialization is required
+    if (data.specialization === 'Other' && !data.customSpecialization?.trim()) {
+        return false;
+    }
+    return true;
+}, {
+    message: "Custom specialization is required when specialization is 'other'",
+    path: ["customSpecialization"]
 });

@@ -1,7 +1,6 @@
-import { PatientInterface } from '@/types/patient.type'
+import { PatientInterface } from '@/types/profile.type'
+import { sexCategory } from '@/utils/constants'
 import {Schema, model} from 'mongoose'
-
-export const sexCategory = ['Male' ,'Female' ,'Other']
 
 const patientSchema= new Schema<PatientInterface>({
     userId: {

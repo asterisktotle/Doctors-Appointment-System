@@ -1,36 +1,6 @@
 import { Schema, model } from "mongoose";
-import { DoctorInterface } from '../types/doctor.type';
-import { sexCategory } from "./patient.model";
-
-// Constants
-const medicalSpecializations = [
-    'Cardiology',
-    'Dermatology', 
-    'Emergency Medicine',
-    'Family Medicine',
-    'Internal Medicine',
-    'Neurology',
-    'Obstetrics and Gynecology',
-    'Oncology',
-    'Orthopedic Surgery',
-    'Pediatrics',
-    'Psychiatry',
-    'Radiology',
-    'Surgery',
-    'Urology',
-    'Other'
-] as const;
-
-const availableDays = [
-    'Monday', 
-    'Tuesday', 
-    'Wednesday', 
-    'Thursday', 
-    'Friday', 
-    'Saturday', 
-    'Sunday'
-] as const;
-
+import { DoctorInterface } from "@/types/profile.type";
+import { availableDays, medicalSpecializations, sexCategory } from "@/utils/constants";
 
 const doctorSchema = new Schema<DoctorInterface>({
     userId: {

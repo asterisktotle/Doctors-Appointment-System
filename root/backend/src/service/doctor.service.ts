@@ -1,11 +1,9 @@
 import { DoctorModel } from "@/models/doctor.model";
-import { DoctorInterface } from "@/types/doctor.type";
-import mongoose from "mongoose";
-
+import { DoctorInterface } from "@/types/profile.type";
 
 
 // Write basic info for doctor (see doctor.type)
-export const createDoctorProfile = async (doctorData: DoctorInterface, session: mongoose.ClientSession) => {
+export const createDoctorProfile = async (doctorData: DoctorInterface) => {
 
     try {
         const doctorProfile = new DoctorModel({
@@ -27,7 +25,7 @@ export const createDoctorProfile = async (doctorData: DoctorInterface, session: 
             
         })
         
-        await doctorProfile.save({session});
+        await doctorProfile.save();
 
         const doctorResponse = doctorProfile.toJSON();
 

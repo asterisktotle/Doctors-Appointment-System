@@ -1,4 +1,4 @@
-import { deleteUserAccount, UserService } from '@/service/user.service';
+import { UserService } from '@/service/user.service';
 
 const registerUser = async (req, res) => {
 	try {
@@ -17,6 +17,24 @@ const registerUser = async (req, res) => {
 		});
 	}
 };
+
+const registerProfile = async (req, res) => {
+	try {
+		const result = await UserService.createUserProfile(req.body)
+
+		res.status(200).json({
+			success: true,
+			data: {
+				profile: result.profile
+			}
+		})
+	} catch (error) {
+		res.status(400).json({
+			success: false,
+			message: error.message
+		})
+	}
+}
 
 const logInUser = async (req, res) => {
 	try {
@@ -60,7 +78,7 @@ const logOutUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
 	try {
-		const isDeleted = await deleteUserAccount(req.body)
+		const isDeleted = await UserService.deleteUserAccount(req.body)
 
 		if(!isDeleted) {
 			res.status(400).json({
@@ -83,6 +101,7 @@ const deleteUser = async (req, res) => {
 
 const UserController = {
 	registerUser,
+	registerProfile,
 	logInUser,
 	logOutUser,
 	deleteUser

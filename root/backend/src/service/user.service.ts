@@ -3,6 +3,7 @@ import { AdminModel } from '@/models/admin.model';
 import { DoctorModel } from '@/models/doctor.model';
 import { PatientModel } from '@/models/patient.model';
 import { UserModel } from '@/models/user.model';
+import { DoctorInterface, PatientInterface, ProfileInterface } from '@/types/profile.type';
 import { UserInterface } from '@/types/user.type';
 import {
 	createDefaultAdminProfile,
@@ -12,13 +13,15 @@ import { isPasswordMatch } from '@/utils/hashedPassword.utils';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import mongoose from "mongoose";
+import { createPatientProfile } from './patient.service';
+import { createDoctorProfile } from './doctor.service';
 
 
-const createUserAccount = async (userData: UserInterface, session: mongoose.ClientSession) => {
-	// TODO:
+const createUserAccount = async (userData: UserInterface) => {
+	
 	try {
 		// Check if account is already created
-		const isExistingUser = await UserModel.findOne({ email: userData.email }).session(session);
+		const isExistingUser = await UserModel.findOne({ email: userData.email })
 
 		if (isExistingUser) {
 			throw new Error('Email is already used');
@@ -32,9 +35,11 @@ const createUserAccount = async (userData: UserInterface, session: mongoose.Clie
 			isVerified: false,
 		});
 
-		await user.save({session});
+		await user.save();
 
 		const userResponse = user.toJSON();
+		// create profile// based on role
+
 
 		return {
 			user: userResponse,
@@ -44,6 +49,40 @@ const createUserAccount = async (userData: UserInterface, session: mongoose.Clie
 		throw error;
 	}
 };
+
+const createUserProfile = async (profileData: ProfileInterface) => {
+	try {
+		
+		const {userId, profile, role} = profileData;
+
+		const user = await UserModel.findById(userId)
+
+		if(!user) {
+			throw new Error('No user account')
+		}
+
+		let newProfile;
+
+		const profileWithId = {
+			...profile,
+			userId: userId 
+		}
+
+		if(role === 'patient') {
+			newProfile = await createPatientProfile(profileWithId as PatientInterface)
+		
+		} else if (role === 'doctor') {
+			newProfile = await createDoctorProfile(profileWithId as DoctorInterface)
+		}
+
+		return {
+			profile: newProfile
+		}
+
+	} catch (error) {
+		throw error
+	}
+}
 
 
 // To Login, user must create a profile (patient/doctor)
@@ -143,7 +182,7 @@ const logoutUserAccount = async (userData: UserInterface) => {
 };
 
 
-export const deleteUserAccount = async (userData: UserInterface) => {
+const deleteUserAccount = async (userData: UserInterface) => {
 	// Create a transaction for deleting both User and Role profile
 	const session = await mongoose.startSession();
 	session.startTransaction();
@@ -191,6 +230,8 @@ export const deleteUserAccount = async (userData: UserInterface) => {
 	}
 };
 
+
+
 // Change password
 // Change email to be added
 
@@ -198,6 +239,7 @@ export const deleteUserAccount = async (userData: UserInterface) => {
 
 export const UserService = {
 	createUserAccount,
+	createUserProfile,
 	loginUserAccount,
 	logoutUserAccount,
 	deleteUserAccount,
