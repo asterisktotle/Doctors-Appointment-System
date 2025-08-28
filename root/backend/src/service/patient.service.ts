@@ -18,7 +18,7 @@ export const createPatientProfile = async (patientData: PatientInterface) => {
                country: patientData.address.country
            }
        })
-       profile.save()
+       await profile.save()
        const response = profile.toJSON()
         return {
             profile: response

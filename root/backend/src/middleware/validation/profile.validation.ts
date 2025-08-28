@@ -2,7 +2,7 @@ import { availableDays, medicalSpecializations } from '@/utils/constants';
 import z from 'zod'
 
 export const PatientProfileSchema = z.object({
-  userId: z.string().min(1, "User ID is required"),
+  // userId: z.string().min(1, "User ID is required"),
   
   firstName: z
     .string()
@@ -14,7 +14,7 @@ export const PatientProfileSchema = z.object({
     .min(1, "Last name is required")
     .max(50, "Last name must be less than 50 characters"),
     
-  sex: z.enum(["male", "female", "other"]),
+  sex: z.enum(["Male", "Female", "Other"]),
 
   birthDate: z
     .string()

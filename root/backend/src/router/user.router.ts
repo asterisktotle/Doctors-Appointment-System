@@ -13,10 +13,10 @@ const UserRouter = Router();
 
 // Public routes
 UserRouter.post('/register-user', validator(UserValidation), registerUser);
+UserRouter.post('/register-profile', profileValidation, registerProfile )
 UserRouter.post('/login', validator(UserValidation), logInUser);
 UserRouter.post('/logout', logOutUser);
 UserRouter.delete('/delete', validator(UserValidation), deleteUser )
-UserRouter.post('/register-profile', profileValidation, registerProfile )
 
 export default UserRouter;
 // Protected routes

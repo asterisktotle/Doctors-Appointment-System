@@ -64,7 +64,7 @@ export const profileValidation =  (req:ProfileValidationRequest, res: any, next:
     if (!role || !['patient', 'doctor'].includes(role)) {
       return res.status(400).json({
         success: false,
-        errors: [{ field: 'role', message: 'Role must be either "patient" or "doctor"' }]
+        errors: [{ field: 'role', message: 'Role must be either patient or doctor' }]
       });
     }
 

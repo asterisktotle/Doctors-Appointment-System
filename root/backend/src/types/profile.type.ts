@@ -2,7 +2,7 @@ import mongoose  from "mongoose";
 
 
 export interface PatientInterface {
-    userId: mongoose.Types.ObjectId,
+    userId?: mongoose.Types.ObjectId,
     firstName: string,
     lastName: string,
     sex: 'Male' | 'Female' | 'Other'
