@@ -1,6 +1,6 @@
 import { PatientModel } from "@/models/patient.model"
-import { PatientInterface } from "@/types/profile.type"
-export const createPatientProfile = async (patientData: PatientInterface) => {
+import { BaseInfo } from "@/types/profile.type"
+export const createPatientProfile = async (patientData: BaseInfo) => {
     
     // Get UserId by UserProfile;
     try {
@@ -30,7 +30,4 @@ export const createPatientProfile = async (patientData: PatientInterface) => {
     
 }
 
-const editPatientProfile = async (patientData: PatientInterface) => {
-    
-}
 

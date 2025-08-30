@@ -97,13 +97,40 @@ const deleteUser = async (req, res) => {
 			message: error.message,
 		});
 	}
- }
+}
+
+const editUser = async (req, res) => {
+	try {
+		const updatedProfile = await UserService.editBaseProfileInfo(req.body)
+		
+
+		if(!updatedProfile) {
+			res.status(400).json({
+			success: false,
+			message: 'Update account failed',
+			});	
+		}
+		
+		res.status(200).json({
+			success: true,
+			message: 'Updated successfully',
+			data: updatedProfile
+		})
+	} catch (error) {
+		res.status(400).json({
+			success: false,
+			message: error.message
+		})
+	}
+}
+
 
 const UserController = {
 	registerUser,
 	registerProfile,
 	logInUser,
 	logOutUser,
-	deleteUser
+	deleteUser,
+	editUser
 };
 export default UserController;

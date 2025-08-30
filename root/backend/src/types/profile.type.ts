@@ -1,7 +1,7 @@
 import mongoose  from "mongoose";
 
 
-export interface PatientInterface {
+export interface BaseInfo {
     userId?: mongoose.Types.ObjectId,
     firstName: string,
     lastName: string,
@@ -36,7 +36,7 @@ type MedicalSpecialization =
 
 type AvailableDays = 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday';
 
-export interface DoctorInterface extends PatientInterface {
+export interface DoctorInterface extends BaseInfo {
     specialization: MedicalSpecialization |null,    
     customSpecialization?: string | null,
     availability: [
@@ -50,6 +50,6 @@ export interface DoctorInterface extends PatientInterface {
 
 export interface ProfileInterface {
     userId: mongoose.Types.ObjectId
-    profile: PatientInterface | DoctorInterface
+    profile: BaseInfo | DoctorInterface
     role: 'patient' | 'doctor'
 }

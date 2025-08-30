@@ -3,7 +3,7 @@ import { AdminModel } from '@/models/admin.model';
 import { DoctorModel } from '@/models/doctor.model';
 import { PatientModel } from '@/models/patient.model';
 import { UserModel } from '@/models/user.model';
-import { DoctorInterface, PatientInterface, ProfileInterface } from '@/types/profile.type';
+import { BaseInfo, DoctorInterface, ProfileInterface } from '@/types/profile.type';
 import { UserInterface } from '@/types/user.type';
 import {
 	createDefaultAdminProfile,
@@ -60,23 +60,23 @@ const createUserProfile = async (profileData: ProfileInterface) => {
 		if(!user) {
 			throw new Error('No user account')
 		}
-
-		let newProfile;
-
+		
 		const profileWithId = {
 			...profile,
 			userId: userId 
 		}
-
+		
+		let existingProfile;
+		
 		if(role === 'patient') {
-			newProfile = await createPatientProfile(profileWithId as PatientInterface)
+			existingProfile = await createPatientProfile(profileWithId as BaseInfo)
 		
 		} else if (role === 'doctor') {
-			newProfile = await createDoctorProfile(profileWithId as DoctorInterface)
+			existingProfile = await createDoctorProfile(profileWithId as DoctorInterface)
 		}
 
 		return {
-			profile: newProfile
+			profile: existingProfile
 		}
 
 	} catch (error) {
@@ -231,15 +231,65 @@ const deleteUserAccount = async (userData: UserInterface) => {
 };
 
 
+const changePassword = async () => {
 
-// Change password
-// Change email to be added
+}
 
+const changeEmail = async () => {
+
+
+}
+
+const editBaseProfileInfo = async (profileData: ProfileInterface) => {
+	try {
+		
+		const {userId, profile} = profileData;
+
+		console.log('1. Received userId:', userId);
+		console.log('2. Profile data:', profile);
+
+	
+
+		const user = await UserModel.findById(userId)
+
+		if(!user) {
+			throw new Error(`No user account: ${user}`)
+		}
+
+		let existingProfile;
+
+		if(user.role === 'patient') {
+			existingProfile = await PatientModel.findOne({userId: userId})
+		} else if (user.role === 'doctor') {
+			existingProfile = await DoctorModel.findOne({userId: userId})
+		}
+		
+		if(!existingProfile){
+			throw new Error(`${user.role} profile not found`)
+		}
+		
+		existingProfile.set(profile)
+
+		const updatedProfile = await existingProfile.save();
+		
+		
+
+		return {
+			profile: updatedProfile,
+			wasModified: existingProfile.isModified(),
+			modifiedPaths: existingProfile.modifiedPaths()
+   		};
+
+	} catch (error) {
+		throw error
+	}
+}
 
 
 export const UserService = {
 	createUserAccount,
 	createUserProfile,
+	editBaseProfileInfo,
 	loginUserAccount,
 	logoutUserAccount,
 	deleteUserAccount,
